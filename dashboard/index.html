@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QUANT-RADAR // Pre-Token Valuation &amp; Airdrop Farming Terminal</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-badge">QR</div>
+      <div>
+        <div class="brand-title">QUANT-RADAR <span class="version-pill" id="model-version">v2.0</span></div>
+        <div class="brand-sub">Multi-Factor Pre-Token Valuation &amp; Airdrop Execution Engine</div>
+      </div>
+    </div>
+    <div class="meta-strip">
+      <div class="meta-item"><span class="meta-label">SNAPSHOT</span><span class="meta-val" id="meta-asof">--</span></div>
+      <div class="meta-item"><span class="meta-label">WATCHLIST FLOOR</span><span class="meta-val" id="meta-floor">$50M</span></div>
+      <div class="meta-item"><span class="meta-label">COVERAGE</span><span class="meta-val" id="meta-coverage">100%</span></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">PRE-TOKEN RANKED PROTOCOLS</div>
+        <div class="kpi-value" id="kpi-count">--</div>
+        <div class="kpi-sub" id="kpi-count-sub">40 Watchlist + Discovery</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">AGGREGATE PRE-TOKEN TVL</div>
+        <div class="kpi-value accent-cyan" id="kpi-tvl">--</div>
+        <div class="kpi-sub">Total locked capital across board</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">TOTAL IMPLIED TOKEN FDV</div>
+        <div class="kpi-value accent-emerald" id="kpi-fdv">--</div>
+        <div class="kpi-sub" id="kpi-fdv-sub">Sector + Momentum + Maturity model</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">EST. TGE AIRDROP OPPORTUNITY</div>
+        <div class="kpi-value accent-amber" id="kpi-airdrop">--</div>
+        <div class="kpi-sub">At 7.5% baseline community allocation</div>
+      </div>
+    </section>
+
+    <section class="formula-banner">
+      <div class="formula-header">
+        <span class="formula-tag">QUANT MODEL</span>
+        <span class="formula-eq">Implied FDV = TVL &times; M<sub>sector</sub> &times; M<sub>momentum</sub>(7d) &times; M<sub>maturity</sub>(age) &times; M<sub>scale</sub>(moat)</span>
+      </div>
+      <div class="formula-notes">
+        <span><strong>M<sub>sector</sub>:</strong> Perps 0.42x | Restaking 0.35x | Bridge 0.32x | RWA 0.31x | Lending 0.29x | DEX 0.27x | Yield 0.21x</span>
+        <span><strong>M<sub>momentum</sub>:</strong> 1 + clamp(7d%, -60, +120) &times; 0.55</span>
+        <span><strong>M<sub>maturity</sub>:</strong> 0.65 + min(age, 1095d)/1095 &times; 0.45</span>
+      </div>
+    </section>
+
+    <section class="controls-bar">
+      <div class="tabs-group">
+        <button class="tab-btn active" data-view="radar" id="tab-radar">Pre-Token Radar</button>
+        <button class="tab-btn" data-view="live" id="tab-live">Live Token Benchmarks</button>
+      </div>
+
+      <div class="filters-group" id="radar-filters">
+        <div class="tier-pills">
+          <button class="pill active" data-tier="all">All Ranked</button>
+          <button class="pill" data-tier="watchlist">Watchlist (40)</button>
+          <button class="pill" data-tier="S-Tier">S-Tier ($250M+)</button>
+          <button class="pill" data-tier="A-Tier">A-Tier ($50M+)</button>
+          <button class="pill" data-tier="Discovery">Early Discovery</button>
+        </div>
+
+        <div class="inputs-row">
+          <input type="text" id="search-input" class="control-input" placeholder="Search protocol, slug, chain, category...">
+          <select id="category-select" class="control-select">
+            <option value="all">All Categories</option>
+          </select>
+          <select id="chain-select" class="control-select">
+            <option value="all">All Chains</option>
+          </select>
+          <select id="sort-select" class="control-select">
+            <option value="implied_desc">Sort: Implied FDV (High &rarr; Low)</option>
+            <option value="tvl_desc">Sort: TVL (High &rarr; Low)</option>
+            <option value="growth_desc">Sort: 7d Growth (High &rarr; Low)</option>
+            <option value="age_desc">Sort: Maturity Age (Oldest First)</option>
+            <option value="efficiency_desc">Sort: Farming ROI Ratio</option>
+          </select>
+          <button id="reset-btn" class="btn-reset">Reset</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="results-meta" id="results-bar">
+      <span id="showing-label">Showing 210 protocols</span>
+      <span class="hint-text">Click any protocol row to open full Valuation Breakdown &amp; 6-Step Airdrop Farming Playbook</span>
+    </div>
+
+    <section class="table-wrap" id="radar-view">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="col-rank">#</th>
+            <th class="col-name">Protocol</th>
+            <th class="col-tier">Tier</th>
+            <th class="col-cat">Category</th>
+            <th class="col-chains">Primary Chains</th>
+            <th class="col-num">TVL (USD)</th>
+            <th class="col-num">7d Change</th>
+            <th class="col-num">Age</th>
+            <th class="col-mult">Multipliers (S&times;G&times;M)</th>
+            <th class="col-num">Implied FDV</th>
+            <th class="col-num">Est. Airdrop (7.5%)</th>
+            <th class="col-action">Farm Plan</th>
+          </tr>
+        </thead>
+        <tbody id="radar-tbody"></tbody>
+      </table>
+    </section>
+
+    <section class="table-wrap hidden" id="live-view">
+      <div class="live-banner">
+        <strong>Market Calibration Benchmarks:</strong> Live-token DeFi protocols from the same snapshot. Kept strictly separate from the pre-token radar to validate sector MCap/TVL multiples.
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Protocol</th>
+            <th>Category</th>
+            <th>Chains</th>
+            <th class="col-num">TVL (USD)</th>
+            <th class="col-num">Live Market Cap</th>
+            <th class="col-num">Observed MCap/TVL</th>
+            <th class="col-num">7d Change</th>
+          </tr>
+        </thead>
+        <tbody id="live-tbody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <div class="modal-backdrop hidden" id="detail-modal">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <div class="modal-badges" id="modal-badges"></div>
+          <h2 class="modal-title" id="modal-title">Protocol Name</h2>
+          <div class="modal-subtitle" id="modal-subtitle">slug &bull; category</div>
+        </div>
+        <button class="modal-close" id="modal-close" title="Close">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-kpi-row" id="modal-kpis"></div>
+
+        <div class="modal-section">
+          <h3 class="section-heading">Quantitative Valuation Breakdown</h3>
+          <div class="factor-grid" id="modal-factors"></div>
+        </div>
+
+        <div class="modal-section">
+          <div class="playbook-header">
+            <h3 class="section-heading">6-Step Actionable Airdrop Farming Playbook</h3>
+            <div class="playbook-tags" id="modal-farm-summary"></div>
+          </div>
+          <div class="steps-list" id="modal-steps"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
